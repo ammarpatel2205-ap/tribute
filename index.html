@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Basic To-Do App</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#f4f6f8;
+    padding:20px;
+}
+
+.container{
+    max-width:700px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+h2{ text-align:center; }
+
+input{
+    width:75%;
+    padding:10px;
+}
+
+button{
+    padding:10px;
+    margin:2px;
+    cursor:pointer;
+}
+
+.pending{ color:#e67e22; }
+.completed{ color:#27ae60; }
+
+.task{
+    border-bottom:1px solid #ddd;
+    padding:10px 0;
+}
+.small{
+    font-size:12px;
+    color:gray;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h2>📝 To-Do App</h2>
+
+<input type="text" id="taskInput" placeholder="Enter new task">
+<button onclick="addTask()">Add Task</button>
+
+<h3 class="pending">Pending Tasks</h3>
+<div id="pendingList"></div>
+
+<h3 class="completed">Completed Tasks</h3>
+<div id="completedList"></div>
+
+</div>
+
+<script>
+
+let tasks=[];
+
+function addTask(){
+    let input=document.getElementById("taskInput");
+    if(input.value==="") return;
+
+    tasks.push({
+        text:input.value,
+        added:new Date(),
+        completed:false,
+        completedTime:null
+    });
+
+    input.value="";
+    render();
+}
+
+function render(){
+
+    let pending=document.getElementById("pendingList");
+    let completed=document.getElementById("completedList");
+
+    pending.innerHTML="";
+    completed.innerHTML="";
+
+    tasks.forEach((task,index)=>{
+
+        let div=document.createElement("div");
+        div.className="task";
+
+        let html=`<strong>${task.text}</strong>
+        <div class="small">Added: ${task.added.toLocaleString()}</div>`;
+
+        if(task.completed){
+            html+=`<div class="small">Completed: ${task.completedTime}</div>`;
+        }
+
+        html+=`
+        <br>
+        <button onclick="toggleComplete(${index})">✔</button>
+        <button onclick="editTask(${index})">Edit</button>
+        <button onclick="deleteTask(${index})">Delete</button>
+        `;
+
+        div.innerHTML=html;
+
+        if(task.completed)
+            completed.appendChild(div);
+        else
+            pending.appendChild(div);
+    });
+}
+
+function toggleComplete(i){
+    tasks[i].completed=!tasks[i].completed;
+    tasks[i].completedTime=new Date().toLocaleString();
+    render();
+}
+
+function deleteTask(i){
+    tasks.splice(i,1);
+    render();
+}
+
+function editTask(i){
+    let newText=prompt("Edit Task:",tasks[i].text);
+    if(newText) tasks[i].text=newText;
+    render();
+}
+
+</script>
+
+</body>
+</html>
